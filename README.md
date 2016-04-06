@@ -8,3 +8,6 @@ This repository consists of a growing set of tools to access, manipulate, and pe
 ## Downloading the Data Set
 The official copy of the point metadata and labels is available on Figshare http://dx.doi.org/10.6084/m9.figshare.1524139.
 The simplest way to acquire the images is to follow the instructions on Squidle at https://squidle.acfr.usyd.edu.au/benthoz2015. It involves downloading a list of images, and the image downloader tool for your platform.
+
+## Data Set Splits
+The data_splits folder contains labels for the training, calibration and test sets used in my PhD thesis (http://hdl.handle.net/2123/14511).
