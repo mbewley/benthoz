@@ -4,7 +4,8 @@ import logging
 import cv2
 import pandas as pd
 
-from benthoz.prep.patches import get_image, get_patches_from_image, write_patches_as_images
+from patches import get_image, get_patches_from_image, write_patches_as_images
+#from benthoz.prep.patches import get_image, get_patches_from_image, write_patches_as_images
 
 DATA_SPLIT_DIR = '../data_splits'
 IMAGES_DIR = '../data/benthoz-2015'
@@ -32,5 +33,5 @@ for image_name, group in training_points.groupby('image_name'):
         group = group.set_index(['row', 'col'])
         print(group)
         p, image_patches = get_patches_from_image(im, group.index, 127)
-        write_patches_as_images(image_patches, group.label, OUT_DIR)
+        write_patches_as_images(image_patches, group, OUT_DIR)
 

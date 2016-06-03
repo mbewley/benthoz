@@ -46,14 +46,17 @@ def get_patches_from_image(im, coords_index, patch_size, return_patches=True):
             image_patches[(r,c)] = im[p.min_r:p.max_r + 1, p.min_c:p.max_c + 1]
         return patches, image_patches
 
-def write_patches_as_images(image_patches, labels, out_dir):
+def write_patches_as_images(image_patches, group, out_dir):
     """
 
     :param image_patches: Dictionary of key (r,c), value (patch RGB numpy array)
-    :param labels: Dictionary of key (r,c), value (class labels)
+    :param group: Group including label dictionary of key (r,c), value (class labels), image_name and patch row and column
     :param out_dir: Directory to write images
     :return:
     """
     for r, c in image_patches:
-        label = labels[(r,c)]
-        cv2.imwrite(os.path.join(out_dir, '{}.png'.format(label)), image_patches[(r,c)])
+        label = group.label[(r,c)]
+        image_path = os.path.join(out_dir, '{}'.format(label))
+        if not os.path.exists(image_path):
+            os.mkdir(image_path)
+        cv2.imwrite(os.path.join(image_path, '{}.png'.format(group.image_name[(r,c)]+'_'+str(r)+'_'+str(c))), image_patches[(r,c)])
