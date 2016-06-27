@@ -4,7 +4,7 @@ import pandas as pd
 
 def get_image(image_path):
     if os.path.exists(image_path):
-        im = cv2.imread(image_path)[::-1]  # Reverse channels to make BGR into RGB
+        im = cv2.imread(image_path)
         return im
     else:
         raise IOError("Couldn't find image {}".format(image_path))
