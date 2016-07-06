@@ -24,14 +24,13 @@ logging.info('Image files found locally: %d' % len(images_found))
 
 training_points = pd.read_csv(os.path.join(DATA_SPLIT_DIR, 'public_labels_train.csv'))
 
-for image_name, group in training_points.groupby('image_name'):
+for image_name, image_points in training_points.groupby('image_name'):
     try:
         im = get_image(os.path.join(IMAGES_DIR, image_name+'.png'))
     except IOError as e:
         logging.debug("Couldn't find image {}".format(image_name))
     else:
-        group = group.set_index(['row', 'col'])
-        print(group)
-        p, image_patches = get_patches_from_image(im, group.index, 127)
-        write_patches_as_images(image_patches, group, OUT_DIR)
+        image_points = image_points.set_index(['row', 'col'])
+        patches = get_patches_from_image(im, image_points.index, 127)
+        write_patches_as_images(image_name, patches=patches, labels=image_points.label, out_dir=OUT_DIR)
 

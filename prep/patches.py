@@ -2,6 +2,7 @@ import os
 import cv2
 import pandas as pd
 
+
 def get_image(image_path):
     if os.path.exists(image_path):
         im = cv2.imread(image_path)
@@ -9,7 +10,8 @@ def get_image(image_path):
     else:
         raise IOError("Couldn't find image {}".format(image_path))
 
-def get_patches_from_image(im, coords_index, patch_size, return_patches=True):
+
+def get_patches_from_image(im, coords_index, patch_size):
     """
 
 
@@ -27,36 +29,36 @@ def get_patches_from_image(im, coords_index, patch_size, return_patches=True):
     r = coords_index.get_level_values('row').values
     c = coords_index.get_level_values('col').values
 
-    patches = pd.DataFrame(index=coords_index)
-    patches['min_r'] = r - patch_radius
-    patches['max_r'] = r + patch_radius
-    patches['min_c'] = c - patch_radius
-    patches['max_c'] = c + patch_radius
+    patches_bounds = pd.DataFrame(index=coords_index)
+    patches_bounds['min_r'] = r - patch_radius
+    patches_bounds['max_r'] = r + patch_radius
+    patches_bounds['min_c'] = c - patch_radius
+    patches_bounds['max_c'] = c + patch_radius
 
-    patches['not_cropped'] = (patches.min_r >= 0) & (patches.max_r < im.shape[0]) & \
-                             (patches.min_c >= 0) & (patches.max_c < im.shape[1])
-    patches.loc[patches.min_r < 0, 'min_r'] = 0
-    patches.loc[patches.min_c < 0, 'min_c'] = 0
-    image_patches = {}
+    patches_bounds['not_cropped'] = (patches_bounds.min_r >= 0) & (patches_bounds.max_r < im.shape[0]) & \
+                                    (patches_bounds.min_c >= 0) & (patches_bounds.max_c < im.shape[1])
+    patches_bounds.loc[patches_bounds.min_r < 0, 'min_r'] = 0
+    patches_bounds.loc[patches_bounds.min_c < 0, 'min_c'] = 0
+    patches = []
+    for (r, c), p in patches_bounds.iterrows():
+        patches.append(im[p.min_r:p.max_r + 1, p.min_c:p.max_c + 1])
+    patches = pd.Series(patches, index=coords_index, name='patch')
+    return patches
 
-    if not return_patches:
-        return patches.index
-    else:
-        for (r, c), p in patches.iterrows():
-            image_patches[(r,c)] = im[p.min_r:p.max_r + 1, p.min_c:p.max_c + 1]
-        return patches, image_patches
 
-def write_patches_as_images(image_patches, group, out_dir):
+def write_patches_as_images(image_name, patches, labels, out_dir):
     """
+    Takes a set of patches from a single image, and writes them to disk.
 
-    :param image_patches: Dictionary of key (r,c), value (patch RGB numpy array)
-    :param group: Group including label dictionary of key (r,c), value (class labels), image_name and patch row and column
-    :param out_dir: Directory to write images
-    :return:
+    :param patches: pandas.Series of index (r,c), value (patch RGB numpy array)
+    :param image_points: pandas.Series of (r,c), value (class labels)
+    :param out_dir: Base directory to write images
     """
-    for r, c in image_patches:
-        label = group.label[(r,c)]
-        image_path = os.path.join(out_dir, '{}'.format(label))
+    df = pd.concat([patches, labels], axis=1)
+
+    for (r, c), dfrow in df.iterrows():
+        image_path = os.path.join(out_dir, '{}'.format(dfrow.label))
         if not os.path.exists(image_path):
             os.mkdir(image_path)
-        cv2.imwrite(os.path.join(image_path, '{}.png'.format(group.image_name[(r,c)]+'_'+str(r)+'_'+str(c))), image_patches[(r,c)])
+        file_name = '{}_{}_{}.png'.format(image_name, r, c)
+        cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)])
