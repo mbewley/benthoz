@@ -1,11 +1,9 @@
 import os
 import logging
 
-import cv2
 import pandas as pd
 
-from patches import get_image, get_patches_from_image, write_patches_as_images
-#from benthoz.prep.patches import get_image, get_patches_from_image, write_patches_as_images
+from prep.patches import get_image, get_patches_from_image, write_patches_as_images
 
 DATA_SPLIT_DIR = '../data_splits'
 IMAGES_DIR = '../data/benthoz-2015'
@@ -25,6 +23,7 @@ logging.info('Image files found locally: %d' % len(images_found))
 training_points = pd.read_csv(os.path.join(DATA_SPLIT_DIR, 'public_labels_train.csv'))
 
 for image_name, image_points in training_points.groupby('image_name'):
+    print(image_name)
     try:
         im = get_image(os.path.join(IMAGES_DIR, image_name+'.png'))
     except IOError as e:

@@ -4,6 +4,12 @@ import pandas as pd
 
 
 def get_image(image_path):
+    """
+    Read an image ready for extracting patches.
+
+    :param image_path: Full path to image.
+    :return: numpy array of image, in BGR format (from opencv)
+    """
     if os.path.exists(image_path):
         im = cv2.imread(image_path)
         return im
@@ -11,15 +17,14 @@ def get_image(image_path):
         raise IOError("Couldn't find image {}".format(image_path))
 
 
-def get_patches_from_image(im, coords_index, patch_size):
+def get_patches_from_image(im, coords_index, patch_size, discard_cropped=False):
     """
+    Get square patches from an image, returned as a pandas series of numpy arrays.
 
-
-    :param withempty: Whether to include 'na' patch entries in the index.
     :param im: An image as a numpy array. Patch will be taken from all channels, as (rows, columns, channels)
     :param coords_index: Index of (row, col) points to use as patch centres
     :param patch_size: Size of patches in pixels (e.g. 15 = square 15x15 patches)
-    :param return_patches: Whether to return the actual patches, or just the index of valid patches
+    :param discard_cropped: Whether to discard patches with boundary issues (default keeps partial patches).
     :return: An index of valid patches (if return_patches), or a pandas series of numpy array patches, indexed by
             coords_index.
     """
@@ -43,6 +48,9 @@ def get_patches_from_image(im, coords_index, patch_size):
     for (r, c), p in patches_bounds.iterrows():
         patches.append(im[p.min_r:p.max_r + 1, p.min_c:p.max_c + 1])
     patches = pd.Series(patches, index=coords_index, name='patch')
+
+    if discard_cropped:
+        patches = patches[patches_bounds.not_cropped]
     return patches
 
 
@@ -61,4 +69,4 @@ def write_patches_as_images(image_name, patches, labels, out_dir):
         if not os.path.exists(image_path):
             os.mkdir(image_path)
         file_name = '{}_{}_{}.png'.format(image_name, r, c)
-        cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)])
+        cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)], [cv2.IMWRITE_PNG_COMPRESSION,9])
