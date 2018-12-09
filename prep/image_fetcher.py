@@ -22,7 +22,10 @@ def fetch_image(url, image_folder):
     im_filename = os.path.split(url)[-1]
     im_path = os.path.join(image_folder, im_filename)
     if not os.path.exists(im_path):
-        urllib.request.urlretrieve(url, im_path)
+        try:
+            urllib.request.urlretrieve(url, im_path)
+        except urllib.error.HTTPError:
+            pass
     else:
         logging.warning('Skipping download of existing image: {}'.format(im_path))
     return im_path
