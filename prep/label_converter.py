@@ -49,6 +49,6 @@ def build_hierarchy_from_id_lookup(id_lookup_file='idlookups.csv'):
         lambda d: ['Physical'] + d)
 
     df_id_lookups['child_name'] = df_id_lookups.parsed_name.apply(lambda d: d[-1])
-    df_id_lookups['ancestor_id_list'] = [get_ancestor_ids(d) for d in df_id_lookups.index]
+    df_id_lookups['ancestor_id_list'] = [get_ancestor_ids(d, df_id_lookups) for d in df_id_lookups.index]
 
     return df_id_lookups
