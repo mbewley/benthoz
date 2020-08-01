@@ -3,9 +3,7 @@ import os
 import urllib
 import logging
 
-IMAGE_LIST = '/mnt/DATA/benthoz2015/BENTHOZ-2015-imagelist.csv'
 S3_ROOT = 'https://s3-ap-southeast-2.amazonaws.com/imos-data/IMOS/AUV/'
-IMAGE_FOLDER = '/mnt/DATA/benthoz2015/images'
 
 
 def web_location_to_url(web_location):
@@ -31,15 +29,15 @@ def fetch_image(url, image_folder):
     return im_path
 
 
-def fetch_all_images():
+def fetch_all_images(image_list_file, image_destination_folder):
     df_images = (pd
-                 .read_csv(IMAGE_LIST)
+                 .read_csv(image_list_file)
                  .query('image__id != "image__id"')  # Filter out 8 junk rows
                  )
     df_images.head()
     for row in df_images.itertuples():
         url = web_location_to_url(row.web_location)
-        fetch_image(url, IMAGE_FOLDER)
+        fetch_image(url, image_destination_folder)
 
 
 if __name__ == '__main__':
