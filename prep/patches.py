@@ -29,7 +29,7 @@ def get_patches_from_image(im, coords_index, patch_size, discard_cropped=False):
             coords_index.
     """
     assert (patch_size % 2 == 1) and (patch_size > 0)
-    patch_radius = patch_size / 2
+    patch_radius = int((patch_size-1) / 2)
 
     r = coords_index.get_level_values('row').values
     c = coords_index.get_level_values('col').values
