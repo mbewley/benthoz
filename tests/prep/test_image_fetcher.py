@@ -8,7 +8,6 @@ import numpy as np
 import prep.patches
 
 DATA_SPLIT_DIR = '../data_splits'
-TEST_OUTPUT_DIR = '../test_output'
 TEST_INPUT_DIR = '../testing_data'
 TEST_IMAGE_NAME = 'PR_20081006_232302_383_LC16'
 

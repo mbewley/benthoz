@@ -5,7 +5,7 @@ DONT_KNOW = -1
 NO = 0
 YES = 1
 
-# Now for a more complicate trick - convert "parsed_name" to a list of node IDs, instead of strings
+# Now for a more complicated trick - convert "parsed_name" to a list of node IDs, instead of strings
 
 def get_ancestor_ids(label_id, df_id_lookups):
     """
