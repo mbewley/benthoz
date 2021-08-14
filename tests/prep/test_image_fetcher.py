@@ -17,7 +17,7 @@ TEST_IMAGE_NAME = 'PR_20081006_232302_383_LC16'
 class TestPatchExtractor:
 
     @pytest.fixture
-    def load_image(self):
+    def load_image(self) -> np.array:
         im = prep.patches.get_image(os.path.join(TEST_INPUT_DIR, TEST_IMAGE_NAME + '.png'))
         return im
 
