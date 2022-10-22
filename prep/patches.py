@@ -29,25 +29,29 @@ def get_patches_from_image(im, coords_index, patch_size, discard_cropped=False):
             coords_index.
     """
     assert (patch_size % 2 == 1) and (patch_size > 0)
-    patch_radius = int((patch_size-1) / 2)
+    patch_radius = int((patch_size - 1) / 2)
 
-    r = coords_index.get_level_values('row').values
-    c = coords_index.get_level_values('col').values
+    r = coords_index.get_level_values("row").values
+    c = coords_index.get_level_values("col").values
 
     patches_bounds = pd.DataFrame(index=coords_index)
-    patches_bounds['min_r'] = r - patch_radius
-    patches_bounds['max_r'] = r + patch_radius
-    patches_bounds['min_c'] = c - patch_radius
-    patches_bounds['max_c'] = c + patch_radius
+    patches_bounds["min_r"] = r - patch_radius
+    patches_bounds["max_r"] = r + patch_radius
+    patches_bounds["min_c"] = c - patch_radius
+    patches_bounds["max_c"] = c + patch_radius
 
-    patches_bounds['not_cropped'] = (patches_bounds.min_r >= 0) & (patches_bounds.max_r < im.shape[0]) & \
-                                    (patches_bounds.min_c >= 0) & (patches_bounds.max_c < im.shape[1])
-    patches_bounds.loc[patches_bounds.min_r < 0, 'min_r'] = 0
-    patches_bounds.loc[patches_bounds.min_c < 0, 'min_c'] = 0
+    patches_bounds["not_cropped"] = (
+        (patches_bounds.min_r >= 0)
+        & (patches_bounds.max_r < im.shape[0])
+        & (patches_bounds.min_c >= 0)
+        & (patches_bounds.max_c < im.shape[1])
+    )
+    patches_bounds.loc[patches_bounds.min_r < 0, "min_r"] = 0
+    patches_bounds.loc[patches_bounds.min_c < 0, "min_c"] = 0
     patches = []
     for (r, c), p in patches_bounds.iterrows():
-        patches.append(im[p.min_r:p.max_r + 1, p.min_c:p.max_c + 1])
-    patches = pd.Series(patches, index=coords_index, name='patch')
+        patches.append(im[p.min_r : p.max_r + 1, p.min_c : p.max_c + 1])
+    patches = pd.Series(patches, index=coords_index, name="patch")
 
     if discard_cropped:
         patches = patches[patches_bounds.not_cropped]
@@ -65,8 +69,8 @@ def write_patches_as_images(image_name, patches, labels, out_dir):
     df = pd.concat([patches, labels], axis=1)
 
     for (r, c), dfrow in df.iterrows():
-        image_path = os.path.join(out_dir, '{}'.format(dfrow.label))
+        image_path = os.path.join(out_dir, "{}".format(dfrow.label))
         if not os.path.exists(image_path):
             os.mkdir(image_path)
-        file_name = '{}_{}_{}.png'.format(image_name, r, c)
-        cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)], [cv2.IMWRITE_PNG_COMPRESSION,9])
+        file_name = "{}_{}_{}.png".format(image_name, r, c)
+        cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)], [cv2.IMWRITE_PNG_COMPRESSION, 9])

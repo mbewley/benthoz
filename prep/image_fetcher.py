@@ -7,15 +7,15 @@ from requests.adapters import HTTPAdapter
 
 import tqdm
 
-S3_ROOT = 'https://s3-ap-southeast-2.amazonaws.com/imos-data/IMOS/AUV/'
+S3_ROOT = "https://s3-ap-southeast-2.amazonaws.com/imos-data/IMOS/AUV/"
 
 
 def web_location_to_url(web_location):
-    im_path_root, im_filename = web_location.split('images')
-    im_filename = im_filename.replace('png', 'tif').strip('/')
-    timestamp = '_'.join(im_path_root.split('/')[1].split('_')[:2])[1:]
-    im_subfolder = 'i' + timestamp + '_gtif'
-    im_path_full = im_path_root + im_subfolder + '/' + im_filename
+    im_path_root, im_filename = web_location.split("images")
+    im_filename = im_filename.replace("png", "tif").strip("/")
+    timestamp = "_".join(im_path_root.split("/")[1].split("_")[:2])[1:]
+    im_subfolder = "i" + timestamp + "_gtif"
+    im_path_full = im_path_root + im_subfolder + "/" + im_filename
     return S3_ROOT + im_path_full
 
 
@@ -36,10 +36,7 @@ def fetch_image(url, image_folder, session):
 
 
 def fetch_all_images(image_list_file, image_destination_folder):
-    df_images = (pd
-                 .read_csv(image_list_file)
-                 .query('image__id != "image__id"')  # Filter out 8 junk rows
-                 )
+    df_images = pd.read_csv(image_list_file).query('image__id != "image__id"')  # Filter out 8 junk rows
     df_images.head()
 
     with requests.Session() as s:
@@ -52,5 +49,5 @@ def fetch_all_images(image_list_file, image_destination_folder):
             fetch_image(url, image_destination_folder, session=s)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     fetch_all_images()
