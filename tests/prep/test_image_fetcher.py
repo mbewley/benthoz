@@ -15,8 +15,18 @@ class TestWebLocationToUrl:
     def test_known_location(self):
         assert prep.image_fetcher.web_location_to_url(WEB_LOCATION) == EXPECTED_URL
 
-    def test_png_only_replaced_in_the_extension(self):
-        """A dive name containing 'png' must survive the extension rewrite."""
+    def test_png_in_the_filename_stem_survives(self):
+        """The old substring replace turned PR_png_0001.png into PR_tif_0001.tif.
+
+        No real BENTHOZ filename has 'png' outside the extension, so the bug was
+        latent - but this input does discriminate: the old implementation fails
+        here, the suffix rewrite does not.
+        """
+        web_location = "PS201012/r20101217_021510_fingal_07/images/PR_png_0001_LC16.png"
+        url = prep.image_fetcher.web_location_to_url(web_location)
+        assert url.endswith("/PR_png_0001_LC16.tif")
+
+    def test_png_in_the_dive_name_survives(self):
         web_location = "PS201012/r20101217_021510_pngbay_01/images/PR_20101217_025403_165_LC16.png"
         url = prep.image_fetcher.web_location_to_url(web_location)
         assert url.endswith("/PR_20101217_025403_165_LC16.tif")

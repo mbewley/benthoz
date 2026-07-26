@@ -11,8 +11,8 @@ license = "Apache-2.0"
 requires-python = ">=3.14"
 authors = [{ name = "Michael Bewley" }]
 
-# Floors are set to the versions the suite is actually verified against, rather
-# than the oldest that might work.
+# Floors are deliberately modern rather than minimal. The suite is developed and
+# verified against current releases; it has not been tested down at the floors.
 dependencies = [
     "numpy>=2.5",
     "pandas>=3.0",
