@@ -1,0 +1,149 @@
+id,name
+1,Not Considered
+2,Biota
+238,Physical
+3,Worms
+13,Sponges
+30,Seagrasses
+32,Molluscs
+39,Macroalgae
+73,Jellies
+81,Fishes
+88,Echinoderms
+102,Crustacea
+118,Cnidaria
+165,Bryozoa
+174,Bioturbation
+228,Bacterial mats
+231,Ascidians
+239,Substrate
+4,Worms: Polychaetes
+7,Worms: Penisworms
+8,Worms: Flatworms
+12,Worms: Acorn worms
+14,Sponges: Massive forms
+20,Sponges: Hollow forms
+23,Sponges: Erect forms
+28,Sponges: Crusts
+33,Molluscs: Gastropods
+34,Molluscs: Chitons
+38,Molluscs: Bivalves
+40,Macroalgae: Sheet-like / membraneous
+44,Macroalgae: Large canopy-forming
+46,Macroalgae: Laminate
+54,Macroalgae: Filamentous / filiform
+58,Macroalgae: Erect fine branching
+62,Macroalgae: Erect coarse branching
+66,Macroalgae: Encrusting
+70,Macroalgae: Articulated calcareous
+80,Jellies: Ctenophores
+87,Fishes: Bony fishes
+89,Echinoderms: Sea urchins
+92,Echinoderms: Sea stars
+93,Echinoderms: Sea cucumbers
+96,Echinoderms: Ophiuroids
+99,Echinoderms: Feather stars
+115,Crustacea: Barnacles
+119,Cnidaria: Tube anemones
+120,Cnidaria: True anemones
+124,Cnidaria: Hydroids
+125,Cnidaria: Hydrocorals
+126,Cnidaria: Corals
+162,Cnidaria: Colonial anemones
+166,Bryozoa: Soft
+169,Bryozoa: Hard
+232,Ascidians: Unstalked
+235,Ascidians: Stalked
+240,Substrate: Unconsolidated (soft)
+252,Substrate: Consolidated (hard)
+5,Worms: Polychaetes: Tube worms
+15,Sponges: Massive forms: Stalked
+16,Sponges: Massive forms: Simple
+17,Sponges: Massive forms: Radially organised
+18,Sponges: Massive forms: Cryptic
+19,Sponges: Massive forms: Barrels
+21,Sponges: Hollow forms: Tubes and chimneys
+22,Sponges: Hollow forms: Cups and alikes
+24,Sponges: Erect forms: Simple
+25,Sponges: Erect forms: Palmate
+26,Sponges: Erect forms: Laminar
+27,Sponges: Erect forms: Branching
+29,Sponges: Crusts: Encrusting
+658,Sponges: Crusts: Creeping / ramose
+41,Macroalgae: Sheet-like / membraneous: Red
+42,Macroalgae: Sheet-like / membraneous: Green
+43,Macroalgae: Sheet-like / membraneous: Brown
+45,Macroalgae: Large canopy-forming: Brown
+400,Macroalgae: Large canopy-forming: Ecklonia radiata 
+47,Macroalgae: Laminate: Red
+48,Macroalgae: Laminate: Green
+49,Macroalgae: Laminate: Brown
+55,Macroalgae: Filamentous / filiform: Red
+56,Macroalgae: Filamentous / filiform: Green
+57,Macroalgae: Filamentous / filiform: Brown
+59,Macroalgae: Erect fine branching: Red
+60,Macroalgae: Erect fine branching: Green
+61,Macroalgae: Erect fine branching: Brown
+63,Macroalgae: Erect coarse branching: Red
+64,Macroalgae: Erect coarse branching: Green
+65,Macroalgae: Erect coarse branching: Brown
+67,Macroalgae: Encrusting: Red
+68,Macroalgae: Encrusting: Green
+69,Macroalgae: Encrusting: Brown
+71,Macroalgae: Articulated calcareous: Red
+72,Macroalgae: Articulated calcareous: Green
+90,Echinoderms: Sea urchins: Regular urchins
+97,Echinoderms: Ophiuroids: Brittle / snake stars
+100,Echinoderms: Feather stars: Unstalked crinoids
+123,Cnidaria: True anemones: Flytrap
+127,Cnidaria: Corals: Stony corals
+143,Cnidaria: Corals: Black & Octocorals
+163,Cnidaria: Colonial anemones: Zoanthids
+164,Cnidaria: Colonial anemones: Corallimorphs
+167,Bryozoa: Soft: Foliaceous
+168,Bryozoa: Soft: Dendroid
+170,Bryozoa: Hard: Massive
+171,Bryozoa: Hard: Fenestrate
+172,Bryozoa: Hard: Encrusting
+233,Ascidians: Unstalked: Solitary
+234,Ascidians: Unstalked: Colonial
+236,Ascidians: Stalked: Solitary
+237,Ascidians: Stalked: Colonial
+241,Substrate: Unconsolidated (soft): Sand / mud (<2mm)
+245,Substrate: Unconsolidated (soft): Pebble / gravel
+253,Substrate: Consolidated (hard): Rock
+254,Substrate: Consolidated (hard): Cobbles
+255,Substrate: Consolidated (hard): Boulders
+402,Echinoderms: Sea urchins: Regular urchins: Centrostephanus rodgersii
+128,Cnidaria: Corals: Stony corals: Tabulate
+129,Cnidaria: Corals: Stony corals: Sub-massive
+131,Cnidaria: Corals: Stony corals: Solitary / mushroom
+134,Cnidaria: Corals: Stony corals: Massive
+136,Cnidaria: Corals: Stony corals: Foliose / plate
+137,Cnidaria: Corals: Stony corals: Encrusting
+139,Cnidaria: Corals: Stony corals: Corymbose
+141,Cnidaria: Corals: Stony corals: Branching
+288,Cnidaria: Corals: Stony corals: Acropora
+144,Cnidaria: Corals: Black & Octocorals: Whip
+145,Cnidaria: Corals: Black & Octocorals: Quill (seapen)
+151,Cnidaria: Corals: Black & Octocorals: Encrusting
+152,Cnidaria: Corals: Black & Octocorals: Branching (3D)
+310,Cnidaria: Corals: Black & Octocorals: Massive 
+146,Cnidaria: Corals: Black & Octocorals: Fan (2D)
+248,Substrate: Unconsolidated (soft): Pebble / gravel: Biologenic
+133,Cnidaria: Corals: Stony corals: Solitary / mushroom: Attached
+391,Cnidaria: Corals: Stony corals: Branching: Pocillopora damicornis 
+153,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy
+159,Cnidaria: Corals: Black & Octocorals: Branching (3D): Fleshy
+147,Cnidaria: Corals: Black & Octocorals: Fan (2D): Rigid
+148,Cnidaria: Corals: Black & Octocorals: Fan (2D): Fern-frond
+249,Substrate: Unconsolidated (soft): Pebble / gravel: Biologenic: Coral rubble
+154,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy: Bushy
+155,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy: Bottle-brush
+158,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy: Arborescent
+160,Cnidaria: Corals: Black & Octocorals: Branching (3D): Fleshy: Mushroom
+161,Cnidaria: Corals: Black & Octocorals: Branching (3D): Fleshy: Arborescent
+149,Cnidaria: Corals: Black & Octocorals: Fan (2D): Fern-frond: Simple
+150,Cnidaria: Corals: Black & Octocorals: Fan (2D): Fern-frond: Complex
+156,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy: Bottle-brush: Simple
+157,Cnidaria: Corals: Black & Octocorals: Branching (3D): Non-fleshy: Bottle-brush: Complex
