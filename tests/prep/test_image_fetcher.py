@@ -1,80 +1,80 @@
-import pytest
-import os
-import shutil
-
 import pandas as pd
-import numpy as np
+import pytest
 
-import prep.patches
+import prep.image_fetcher
 
-DATA_SPLIT_DIR = "../data_splits"
-TEST_INPUT_DIR = "../testing_data"
-TEST_IMAGE_NAME = "PR_20081006_232302_383_LC16"
+# A real row from BENTHOZ-2015-imagelist.csv.
+WEB_LOCATION = "PS201012/r20101217_021510_fingal_07_dense_fihpz_b/images/PR_20101217_025403_165_LC16.png"
+EXPECTED_URL = (
+    "https://s3-ap-southeast-2.amazonaws.com/imos-data/IMOS/AUV/"
+    "PS201012/r20101217_021510_fingal_07_dense_fihpz_b/"
+    "i20101217_021510_gtif/PR_20101217_025403_165_LC16.tif"
+)
 
 
-class TestPatchExtractor:
-    @pytest.fixture
-    def load_image(self) -> np.array:
-        im = prep.patches.get_image(os.path.join(TEST_INPUT_DIR, TEST_IMAGE_NAME + ".png"))
-        return im
+class TestWebLocationToUrl:
+    def test_known_location(self):
+        assert prep.image_fetcher.web_location_to_url(WEB_LOCATION) == EXPECTED_URL
 
-    def test_get_image(self, load_image):
-        im = load_image
-        assert im.shape == (1024, 1360, 3)
-        assert im.dtype == np.uint8
+    def test_png_only_replaced_in_the_extension(self):
+        """A dive name containing 'png' must survive the extension rewrite."""
+        web_location = "PS201012/r20101217_021510_pngbay_01/images/PR_20101217_025403_165_LC16.png"
+        url = prep.image_fetcher.web_location_to_url(web_location)
+        assert url.endswith("/PR_20101217_025403_165_LC16.tif")
+        assert "pngbay" in url
 
-    def test_get_patches_from_image(self, load_image, tmpdir):
-        im = load_image
-        PATCHSIZE = 127
-        p1 = (119, 647)
-        p2 = (155, 50)
-        p3 = (942, 892)
-        p4 = (989, 365)
-        coords_index = pd.MultiIndex.from_tuples([p1, p2, p3, p4], names=["row", "col"])
-        extracted_patches = prep.patches.get_patches_from_image(im=im, coords_index=coords_index, patch_size=PATCHSIZE)
+    def test_every_row_in_the_real_manifest_converts(self, repo_root):
+        """Structural invariants across all 9,882 published images."""
+        manifest = repo_root / "BENTHOZ-2015-imagelist.csv"
+        df = pd.read_csv(manifest).query('image__id != "image__id"')
 
-        # Correct number of patches
-        assert len(extracted_patches) == len(coords_index)
+        urls = df.web_location.map(prep.image_fetcher.web_location_to_url)
 
-        # Correct patch shapes
-        assert extracted_patches[p1].shape, (127, 127, 3)
-        assert extracted_patches[p2].shape, (127, 64 + 50, 3)
-        assert extracted_patches[p3].shape, (127, 127, 3)
-        assert extracted_patches[p4].shape, (63 + 1024 - 989, 127, 3)
+        assert len(urls) == len(df)
+        assert urls.str.startswith(prep.image_fetcher.S3_ROOT).all()
+        assert urls.str.endswith(".tif").all()
+        assert not urls.str.contains("/images/").any()
+        assert urls.str.contains("_gtif/").all()
 
-        # Correct patch values
-        assert np.all(extracted_patches[p1] == im[p1[0] - 63 : p1[0] + 64, p1[1] - 63 : p1[1] + 64, :])
-        assert np.all(extracted_patches[p2] == im[p2[0] - 63 : p2[0] + 64, : p2[1] + 64, :])
-        assert np.all(extracted_patches[p3] == im[p3[0] - 63 : p3[0] + 64, p3[1] - 63 : p3[1] + 64, :])
-        assert np.all(extracted_patches[p4] == im[p4[0] - 63 :, p4[1] - 63 : p4[1] + 64, :])
 
-        # Test that the means of the first channel (Blue, given opencv reads in BGR format) have not changed.
-        assert extracted_patches[p1][:, :, 0].mean() == pytest.approx(49.5024490049, 1e-12)
-        assert extracted_patches[p2][:, :, 0].mean() == pytest.approx(86.4618041166, 1e-12)
-        assert extracted_patches[p3][:, :, 0].mean() == pytest.approx(45.5314030628, 1e-12)
-        assert extracted_patches[p4][:, :, 0].mean() == pytest.approx(72.5908725695, 1e-12)
+class TestFetchImage:
+    def test_skips_existing_file(self, tmp_path):
+        """An already-downloaded image must not be re-fetched."""
+        existing = tmp_path / "PR_20101217_025403_165_LC16.tif"
+        existing.write_bytes(b"already here")
 
-        # Save test patches with fake labels
-        labels = pd.Series([2, 238, 2, 238], index=coords_index, name="label")
-        prep.patches.write_patches_as_images(TEST_IMAGE_NAME, patches=extracted_patches, labels=labels, out_dir=tmpdir)
+        class ExplodingSession:
+            def get(self, url):
+                raise AssertionError("should not have been called")
 
-        # Correct patch contents
-        for (r, c) in coords_index:
-            saved_patch = prep.patches.get_image(
-                os.path.join(tmpdir, str(labels[(r, c)]), "{}_{}_{}.png".format(TEST_IMAGE_NAME, r, c))
-            )
-            assert np.all(extracted_patches[(r, c)] == saved_patch)
+        path = prep.image_fetcher.fetch_image(EXPECTED_URL, str(tmp_path), ExplodingSession())
 
-    def test_dropping_cropped_patches(self, load_image):
-        im = load_image
-        PATCHSIZE = 127
-        p1 = (119, 647)
-        p2 = (155, 50)
-        p3 = (942, 892)
-        p4 = (989, 365)
-        coords_index = pd.MultiIndex.from_tuples([p1, p2, p3, p4], names=["row", "col"])
-        extracted_patches = prep.patches.get_patches_from_image(
-            im=im, coords_index=coords_index, patch_size=PATCHSIZE, discard_cropped=True
-        )
-        # Correct number of patches
-        assert len(extracted_patches) == 2
+        assert path == str(existing)
+        assert existing.read_bytes() == b"already here"
+
+    def test_writes_fetched_content(self, tmp_path):
+        class FakeResponse:
+            ok = True
+            content = b"tiff bytes"
+
+        class FakeSession:
+            def get(self, url):
+                return FakeResponse()
+
+        path = prep.image_fetcher.fetch_image(EXPECTED_URL, str(tmp_path), FakeSession())
+
+        assert (tmp_path / "PR_20101217_025403_165_LC16.tif").read_bytes() == b"tiff bytes"
+        assert path == str(tmp_path / "PR_20101217_025403_165_LC16.tif")
+
+    def test_failed_response_writes_nothing(self, tmp_path, caplog):
+        class FakeResponse:
+            ok = False
+
+        class FakeSession:
+            def get(self, url):
+                return FakeResponse()
+
+        prep.image_fetcher.fetch_image(EXPECTED_URL, str(tmp_path), FakeSession())
+
+        assert list(tmp_path.iterdir()) == []
+        assert "Failed to fetch image" in caplog.text

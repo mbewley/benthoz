@@ -63,3 +63,6 @@ target/
 
 
 benthoz_data
+
+# Notebook runtime artefacts
+notebook_log.txt

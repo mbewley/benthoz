@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "benthoz"
+version = "0.2.0"
+description = "Tools to access, manipulate and classify the BENTHOZ-2015 benthic imagery data set"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+authors = [{ name = "Michael Bewley" }]
+
+dependencies = [
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyarrow>=16.0",          # parquet engine for the label splits
+    "opencv-python-headless>=4.10",
+    "requests>=2.32",
+    "urllib3>=2.2",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "black>=24.0",
+]
+notebook = [
+    "jupyterlab>=4.2",
+    "matplotlib>=3.9",
+    "networkx>=3.3",
+    "imageio>=2.34",
+    # pygraphviz also needs the system graphviz package (apt install graphviz graphviz-dev)
+    "pygraphviz>=1.13",
+]
+
+[project.urls]
+"Data set paper" = "http://www.nature.com/articles/sdata201557"
+"Data set" = "http://dx.doi.org/10.6084/m9.figshare.1524139"
+
+[tool.setuptools]
+packages = ["prep"]
+
+[tool.pytest.ini_options]
+# Anchors the pytest rootdir here, so the root conftest.py is always loaded and
+# the suite runs identically from any working directory.
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 120

@@ -70,7 +70,6 @@ def write_patches_as_images(image_name, patches, labels, out_dir):
 
     for (r, c), dfrow in df.iterrows():
         image_path = os.path.join(out_dir, "{}".format(dfrow.label))
-        if not os.path.exists(image_path):
-            os.mkdir(image_path)
+        os.makedirs(image_path, exist_ok=True)
         file_name = "{}_{}_{}.png".format(image_name, r, c)
         cv2.imwrite(os.path.join(image_path, file_name), df.patch[(r, c)], [cv2.IMWRITE_PNG_COMPRESSION, 9])
