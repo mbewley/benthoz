@@ -50,6 +50,22 @@ def df_id_lookups(id_lookup_file):
 
 
 @pytest.fixture(scope="session")
+def full_id_lookups(repo_root):
+    """The real 148-class hierarchy, for tests that must exercise the shipped table."""
+    from prep.label_converter import build_hierarchy_from_id_lookup
+
+    return build_hierarchy_from_id_lookup(repo_root / "idlookups.csv")
+
+
+@pytest.fixture(scope="session")
+def train_points(data_split_dir):
+    """The published training split, clipped to the image bounds."""
+    from prep.labels import load_points
+
+    return load_points(data_split_dir / "public_labels_train.csv")
+
+
+@pytest.fixture(scope="session")
 def test_image_path(testing_data_dir):
     """Path to the single checked-in sample image."""
     return testing_data_dir / (TEST_IMAGE_NAME + ".png")

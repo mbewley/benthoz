@@ -9,11 +9,15 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 USER ${NB_UID}
 
+# Pinned to match requires-python in pyproject.toml. A no-op if the base image
+# already ships 3.14; without it, a base on an older Python fails the install.
+RUN mamba install -y -c conda-forge python=3.14 && mamba clean -afy
+
 WORKDIR /home/jovyan/benthoz
 COPY --chown=${NB_UID}:${NB_GID} . .
 
 # Editable, so a mounted working copy takes precedence at runtime.
-RUN pip install --no-cache-dir -e ".[dev,notebook]"
+RUN pip install --no-cache-dir -e ".[dev,notebook,graphviz]"
 
 # The imagery is not in the image. Mount it at benthoz_data, e.g.
 #   docker run --gpus all -p 8888:8888 \

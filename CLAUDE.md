@@ -64,8 +64,13 @@ mask = prep.labels.points_to_mask(points_for_one_image, df_id_lookups)
 
 An earlier version of the pipeline stored those masks as `.npz` per image. Avoid
 going back to that: each array is 206 MB in memory to carry ~50 meaningful values,
-and it cost 263 MB on disk for the training split alone. `points_to_mask`
-reproduces the old arrays exactly (verified bit-for-bit on 300 images).
+and it cost 263 MB on disk for the training split alone.
+
+`points_to_mask` reproduces those old arrays exactly. The `.npz` files are gone, so
+that equivalence is now guarded by `reference_mask` in `tests/prep/test_labels.py` —
+a verbatim copy of the original per-point loop, kept as an independent oracle. **Do
+not "tidy it up" to call `points_to_mask`**; the whole point is that the two
+implementations are written differently and must agree.
 
 For patch classifiers, skip masks entirely and use
 `prep.labels.points_to_bit_vectors(points, df_id_lookups)` — one target vector
@@ -93,10 +98,22 @@ Two gotchas in `build_hierarchy_from_id_lookup`:
 
 ## Development
 
+Python 3.14+.
+
 ```bash
 pip install -e ".[dev,notebook]"
 pytest
 ```
+
+`pygraphviz` is deliberately **not** in the `notebook` extra — it compiles against
+system headers and breaks the install on a machine without them. It lives in its
+own extra:
+
+```bash
+sudo apt install graphviz graphviz-dev && pip install -e ".[graphviz]"
+```
+
+Only the notebook's hierarchy plot needs it; nothing else does.
 
 The suite runs from any working directory — `pyproject.toml` anchors the pytest
 rootdir and the root `conftest.py` provides path-anchored fixtures. Don't
@@ -110,6 +127,13 @@ Docker is the reliable way to get the full stack, including GPU and graphviz:
 docker build -t benthoz .
 ```
 
+### There is no CI
+
+Nothing runs the tests for you. **Run `pytest` locally before pushing or opening a
+PR** — that is the only gate this repo has. If a change touches `prep/labels.py`,
+`prep/label_converter.py`, or the class hierarchy, say so in the PR, because a
+regression there is silent in the data rather than loud in a crash.
+
 ### Testing notes
 
 `tests/prep/test_label_converter.py` and `test_labels.py` run against the 14-class
@@ -119,3 +143,8 @@ full `idlookups.csv`.
 
 The channel-mean assertions in `test_patches.py` are regression guards on pixel
 content; if they move, patch extraction changed.
+
+Watch for assertions that cannot fail. The original suite had four written
+`assert x.shape, (127, 127, 3)` — a message argument, not a comparison — which
+passed unconditionally for years. When adding a guard, break the code on purpose
+once and confirm the test goes red.

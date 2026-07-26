@@ -123,6 +123,46 @@ class TestPointsToMask:
             prep.labels.points_to_mask(unknown, df_id_lookups, SMALL_SHAPE)
 
 
+def reference_mask(points, df_id_lookups, im_shape):
+    """The original per-point loop that generated the old .npz label masks.
+
+    Kept verbatim as an independent oracle. points_to_mask is a vectorised
+    rewrite of this, and the two must never diverge - that equivalence is the
+    justification for having deleted the .npz files.
+    """
+    mask = np.ones([len(df_id_lookups), im_shape[0], im_shape[1]], dtype=np.int8) * DONT_KNOW
+    for row, col, label_id in zip(points.row, points.col, points.label):
+        mask[:, row, col] = df_id_lookups.loc[label_id, "bit_vector"]
+    return mask
+
+
+class TestMatchesReferenceImplementation:
+    def test_matches_on_the_fixture_hierarchy(self, points, df_id_lookups):
+        assert np.array_equal(
+            prep.labels.points_to_mask(points, df_id_lookups, SMALL_SHAPE),
+            reference_mask(points, df_id_lookups, SMALL_SHAPE),
+        )
+
+    def test_matches_on_a_real_image(self, train_points, full_id_lookups):
+        """Full 148-class hierarchy against real published points."""
+        image_name = train_points.image_name.iloc[0]
+        image_points = train_points[train_points.image_name == image_name]
+
+        assert np.array_equal(
+            prep.labels.points_to_mask(image_points, full_id_lookups),
+            reference_mask(image_points, full_id_lookups, prep.labels.IM_SHAPE),
+        )
+
+    def test_matches_where_points_share_a_class(self, df_id_lookups):
+        """Repeated labels must not accumulate or overwrite each other's pixels."""
+        repeated = pd.DataFrame({"row": [0, 1, 2], "col": [0, 1, 2], "label": [SEA_STARS] * 3})
+
+        assert np.array_equal(
+            prep.labels.points_to_mask(repeated, df_id_lookups, SMALL_SHAPE),
+            reference_mask(repeated, df_id_lookups, SMALL_SHAPE),
+        )
+
+
 class TestParquetRoundTrip:
     def test_points_survive_a_write_and_read(self, points, tmp_path):
         """Storage is plain pandas; this guards the format, not our own codec."""

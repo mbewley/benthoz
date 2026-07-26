@@ -49,7 +49,6 @@ def fetch_image(url, image_folder, session):
 
 def fetch_all_images(image_list_file, image_destination_folder):
     df_images = pd.read_csv(image_list_file).query('image__id != "image__id"')  # Filter out 8 junk rows
-    df_images.head()
 
     with requests.Session() as s:
         retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[408, 500])

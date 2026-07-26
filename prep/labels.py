@@ -73,6 +73,9 @@ def points_to_mask(points, df_id_lookups, im_shape=IM_SHAPE):
     bit vector, which marks that class and its ancestors YES, its descendants
     DONT_KNOW, and every other class NO.
 
+    Coordinates are assumed to already sit inside im_shape; load_points does that
+    clipping, and this does not repeat it.
+
     :param points: A dataframe of row, col, label for one image.
     :param df_id_lookups: A dataframe from build_hierarchy_from_id_lookup.
     :param im_shape: (rows, cols) of the image.

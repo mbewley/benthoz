@@ -8,13 +8,15 @@ version = "0.2.0"
 description = "Tools to access, manipulate and classify the BENTHOZ-2015 benthic imagery data set"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.11"
+requires-python = ">=3.14"
 authors = [{ name = "Michael Bewley" }]
 
+# Floors are set to the versions the suite is actually verified against, rather
+# than the oldest that might work.
 dependencies = [
-    "numpy>=2.0",
-    "pandas>=2.2",
-    "pyarrow>=16.0",          # parquet engine for the label splits
+    "numpy>=2.5",
+    "pandas>=3.0",
+    "pyarrow>=20.0",          # parquet engine for the label splits
     "opencv-python-headless>=4.10",
     "requests>=2.32",
     "urllib3>=2.2",
@@ -31,9 +33,10 @@ notebook = [
     "matplotlib>=3.9",
     "networkx>=3.3",
     "imageio>=2.34",
-    # pygraphviz also needs the system graphviz package (apt install graphviz graphviz-dev)
-    "pygraphviz>=1.13",
 ]
+# Kept out of [notebook] because pygraphviz compiles against system headers and
+# will fail to build without them:  apt install graphviz graphviz-dev
+graphviz = ["pygraphviz>=1.13"]
 
 [project.urls]
 "Data set paper" = "http://www.nature.com/articles/sdata201557"
