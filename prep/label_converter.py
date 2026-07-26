@@ -120,6 +120,5 @@ def build_hierarchy_from_id_lookup(id_lookup_file="idlookups.csv"):
     # Create a multilabel, one hot encoded bit vector for each class, taking into account the hierarchy of ancestors, and unspecified descendants.
     # We now want to represent this class hierarchy as a bit-vector. Each class index has a unique bit in the vector. A root level class will turn on a single bit. A depth 4 class will turn on 4 bits.
     df_id_lookups["bit_vector"] = [get_bit_vector(d, df_id_lookups) for d in df_id_lookups.index]
-    df_id_lookups
 
     return df_id_lookups

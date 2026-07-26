@@ -32,7 +32,6 @@ notebook = [
     "jupyterlab>=4.2",
     "matplotlib>=3.9",
     "networkx>=3.3",
-    "imageio>=2.34",
 ]
 # Kept out of [notebook] because pygraphviz compiles against system headers and
 # will fail to build without them:  apt install graphviz graphviz-dev

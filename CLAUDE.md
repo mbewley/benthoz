@@ -115,6 +115,10 @@ sudo apt install graphviz graphviz-dev && pip install -e ".[graphviz]"
 
 Only the notebook's hierarchy plot needs it; nothing else does.
 
+`pyarrow` is a core dependency even though nothing imports it directly — pandas
+lists it only as an *optional* extra, so without it `to_parquet` fails at runtime.
+Don't drop it as unused.
+
 The suite runs from any working directory — `pyproject.toml` anchors the pytest
 rootdir and the root `conftest.py` provides path-anchored fixtures. Don't
 reintroduce `../`-relative data paths in tests.

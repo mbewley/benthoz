@@ -1,7 +1,6 @@
 import pandas as pd
 import pytest
 
-import prep.label_converter
 from prep.label_converter import DONT_KNOW, NO, YES
 
 # From testing_data/idlookups_test.csv.

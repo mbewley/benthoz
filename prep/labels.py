@@ -81,7 +81,7 @@ def points_to_mask(points, df_id_lookups, im_shape=IM_SHAPE):
     :param im_shape: (rows, cols) of the image.
     :return: An (n_classes, rows, cols) int8 array.
     """
-    bit_vectors = bit_vector_matrix(df_id_lookups)[_class_positions(points, df_id_lookups)]
+    bit_vectors = points_to_bit_vectors(points, df_id_lookups)
 
     mask = np.full((len(df_id_lookups), *im_shape), DONT_KNOW, dtype=np.int8)
     mask[:, points.row.values, points.col.values] = bit_vectors.T
