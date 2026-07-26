@@ -11,3 +11,26 @@ The simplest way to acquire the images is to follow the instructions on Squidle 
 
 ## Data Set Splits
 The data_splits folder contains labels for the training, calibration and test sets used in my PhD thesis (http://hdl.handle.net/2123/14511).
+
+## Getting Started
+Needs Python 3.14 or newer.
+```bash
+pip install -e ".[dev,notebook]"
+ln -s /path/to/benthoz_data benthoz_data   # the imagery is not in the repo
+pytest
+```
+The hierarchy plot in the notebook additionally needs graphviz, which has to be installed
+at the system level before the Python package will build:
+```bash
+sudo apt install graphviz graphviz-dev && pip install -e ".[graphviz]"
+```
+Then work through `prepare_dataset.ipynb`, which downloads the imagery, builds the CATAMI class
+hierarchy, and writes the point labels for each split to parquet.
+
+Alternatively `docker build -t benthoz .` gives you the whole stack including GPU support.
+
+## Labels
+Annotations are sparse points, roughly 40 per image, stored as one parquet file per split
+(~1.4 MB for all three). Dense `(n_classes, height, width)` masks are built on demand with
+`prep.labels.points_to_mask` rather than stored on disk. See CLAUDE.md for the hierarchy
+semantics and the gotchas.

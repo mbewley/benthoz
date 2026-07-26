@@ -1,0 +1,12 @@
+# The imagery is mounted at runtime, never baked into the image.
+benthoz_data
+data
+
+.git
+.gitignore
+.ipynb_checkpoints
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+notebook_log.txt
