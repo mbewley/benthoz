@@ -1,5 +1,10 @@
 # Pinned on purpose. `latest` silently moves the CUDA, Python and Jupyter versions
 # underneath you, which is what made the original image unreproducible.
+#
+# The toolbox itself has no GPU-dependent code, so the CUDA line here is a
+# reproducibility default rather than a requirement. If it doesn't suit your
+# driver or GPU generation, swap the tag for any other maintained one:
+#   https://hub.docker.com/r/cschranz/gpu-jupyter/tags
 FROM cschranz/gpu-jupyter:v1.11_cuda-13.0_ubuntu-24.04_python-only
 
 USER root
